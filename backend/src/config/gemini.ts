@@ -8,6 +8,6 @@ if (!apiKey) {
   process.exit(1);
 }
 
-export const ai = new GoogleGenAI({ apiKey });
+export const geminiModel = new GoogleGenAI({ apiKey });
 
 logger.info('Gemini AI client successfully initialized with provided credentials.');
