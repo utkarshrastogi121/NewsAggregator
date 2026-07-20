@@ -119,7 +119,7 @@ export class NewsService {
             id: true,
             title: true,
             url: true,
-            publisher: true,
+            source: true,
             publishedAt: true
           }
         },

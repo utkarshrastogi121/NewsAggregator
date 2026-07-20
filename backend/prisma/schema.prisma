@@ -66,9 +66,10 @@ model ComparisonSummary {
 
 model Bookmark {
   id        String   @id @default(uuid())
+  userId    String
   articleId String
   article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
-  @@unique([articleId])
+  @@unique([userId, articleId])
 }
