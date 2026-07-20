@@ -6,8 +6,12 @@ import { prisma } from "./utils/prisma";
 import { initScheduler } from "./config/cron";
 
 import "./queues/news.worker";
+import { setupSwagger } from "./config/swagger";
 
 const PORT = process.env.PORT || 3000;
+
+setupSwagger(app);
+
 
 async function startServer() {
   try {
