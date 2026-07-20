@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  articles  Article[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([slug])
+}
+
+model Article {
+  id                 String              @id @default(uuid())
+  title              String
+  url                String              @unique
+  source             String
+  content            String              @db.Text
+  summary            String?             @db.Text
+  publishedAt        DateTime
+  categoryId         String
+  category           Category            @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  eventGroupId       String?
+  eventGroup         EventGroup?         @relation(fields: [eventGroupId], references: [id], onDelete: SetNull)
+  bookmarks          Bookmark[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([categoryId])
+  @@index([eventGroupId])
+  @@index([publishedAt])
+}
+
+model EventGroup {
+  id                 String              @id @default(uuid())
+  commonTopic        String
+  articles           Article[]
+  comparisonSummary  ComparisonSummary?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model ComparisonSummary {
+  id                   String     @id @default(uuid())
+  commonFacts          String     @db.Text
+  differences          String     @db.Text
+  sourceHighlights     String     @db.Text
+  eventGroupId         String     @unique
+  eventGroup           EventGroup @relation(fields: [eventGroupId], references: [id], onDelete: Cascade)
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([articleId])
+}
