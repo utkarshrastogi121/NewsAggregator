@@ -12,9 +12,12 @@ import {
 import { prisma } from '../utils/prisma';
 import { logger } from '../config/logger';
 
+console.log("NEWS WORKER FILE LOADED");
+
 export const newsWorker = new Worker(
   'news-processing-queue',
   async (job: Job) => {
+    console.log("INSIDE PROCESSOR");
     logger.info(`Worker picked up job [${job.id}] - Action type: [${job.name}]`);
 
     switch (job.name) {
@@ -23,6 +26,9 @@ export const newsWorker = new Worker(
 
         const scrapedItems: RawScrapedArticle[] =
           await ScraperService.scrapeFeed(publisherName, targetUrl);
+
+          console.log("SCRAPED ITEMS:", scrapedItems.length);
+console.log(scrapedItems);
 
         for (const item of scrapedItems) {
           try {
@@ -115,7 +121,23 @@ export const newsWorker = new Worker(
     concurrency: 2
   }
 );
+console.log("WORKER NAME:", newsWorker.name);
 
+newsWorker.on("ready", () => {
+  console.log("✅ Worker READY");
+});
+
+newsWorker.on("active", (job) => {
+  console.log("🔥 ACTIVE:", job.name, job.id);
+});
+
+newsWorker.on("completed", (job) => {
+  console.log("✅ COMPLETED:", job.id);
+});
+
+newsWorker.on("error", (err) => {
+  console.log("❌ WORKER ERROR:", err);
+});
 
 // Worker lifecycle logs
 newsWorker.on('completed', (job) => {

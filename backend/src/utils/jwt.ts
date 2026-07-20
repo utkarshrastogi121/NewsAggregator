@@ -2,8 +2,6 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-console.log("jwt:", JWT_SECRET);
-
 export function generateToken(userId: string) {
   return jwt.sign(
     {

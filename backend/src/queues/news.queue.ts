@@ -22,6 +22,7 @@ export const newsQueue = new Queue('news-processing-queue', {
   connection: redisConnection,
   ...defaultQueueJobOptions,
 });
+console.log("QUEUE NAME:", newsQueue.name);
 
 export class NewsQueueProducer {
   /**
@@ -31,9 +32,7 @@ export class NewsQueueProducer {
     try {
       const jobName = `${NEWS_JOBS.SCRAPE_FEED}:${payload.publisherName.toLowerCase().replace(/\s+/g, '-')}`;
       
-      await newsQueue.add(NEWS_JOBS.SCRAPE_FEED, payload, {
-        jobId: jobName, // Enforces unique job identities to prevent identical execution duplication
-      });
+      await newsQueue.add(NEWS_JOBS.SCRAPE_FEED, payload);
       
       logger.info(`Successfully dispatched scrape job for [${payload.publisherName}] to background worker.`);
     } catch (error: any) {
