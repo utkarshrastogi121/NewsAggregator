@@ -1,5 +1,5 @@
 import puppeteer, { Browser } from 'puppeteer';
-import { logger } from '../config/logger.js';
+import { logger } from '../config/logger';
 
 export interface RawScrapedArticle {
   title: string;
