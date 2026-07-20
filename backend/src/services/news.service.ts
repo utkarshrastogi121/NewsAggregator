@@ -1,7 +1,7 @@
 import { prisma } from '../utils/prisma';
-import { redis } from '../config/redis.js';
-import { logger } from '../config/logger.js';
-import { GetNewsInput, BookmarkArticleInput } from '../validators/news.validator.js';
+import { redis } from '../config/redis';
+import { logger } from '../config/logger';
+import { GetNewsInput, BookmarkArticleInput } from '../validators/news.validator';
 
 export class NewsService {
   /**

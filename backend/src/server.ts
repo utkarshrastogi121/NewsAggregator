@@ -1,9 +1,28 @@
+import "dotenv/config";
+
 import app from "./app";
-import dotenv from 'dotenv'
-dotenv.config();
+import { logger } from "./config/logger";
+import { prisma } from "./utils/prisma";
+import { initScheduler } from "./config/cron";
 
-const PORT=process.env.PORT;
+import "./queues/news.worker";
 
-app.listen(PORT, ()=>{
-    console.log(`Server is listening at PORT: ${PORT}`);
-})
+const PORT = process.env.PORT || 3000;
+
+async function startServer() {
+  try {
+    await prisma.$connect();
+    logger.info("Database connected.");
+
+    initScheduler();
+
+    app.listen(PORT, () => {
+      logger.info(`Server running on port ${PORT}`);
+    });
+  } catch (error: any) {
+    logger.error(`Failed to start server: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+startServer();

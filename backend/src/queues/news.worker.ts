@@ -1,5 +1,5 @@
 import { Worker, Job } from 'bullmq';
-import { redisConnectionOptions } from './queue.config';
+import { redisConnection } from './queue.config';
 import { ScraperService, RawScrapedArticle } from '../services/scraper.service';
 import { ClusteringService } from '../services/clustering.service';
 import { AIService } from '../services/ai.service';
@@ -69,7 +69,7 @@ export const newsWorker = new Worker(
     }
   },
   {
-    connection: redisConnectionOptions,
+    connection: redisConnection,
     concurrency: 2 // Limits local Chromium browser allocations to protect server resources
   }
 );

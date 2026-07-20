@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { NewsController } from '../controllers/news.controller.js';
-import { validate } from '../middlewares/validate.middleware.js';
-import { GetNewsSchema, BookmarkArticleSchema } from '../validators/news.validator.js';
+import { NewsController } from '../controllers/news.controller';
+import { validate } from '../middlewares/validate.middleware';
+import { GetNewsSchema, BookmarkArticleSchema } from '../validators/news.validator';
 
 const router = Router();
 

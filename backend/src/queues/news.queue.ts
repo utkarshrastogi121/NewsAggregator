@@ -1,6 +1,6 @@
 import { Queue } from 'bullmq';
-import { redisConnectionOptions, defaultQueueJobOptions } from './queue.config.js';
-import { logger } from '../config/logger.js';
+import { redisConnection, defaultQueueJobOptions } from './queue.config';
+import { logger } from '../config/logger';
 
 // Define strict string literals for job names to prevent typos across producers and consumers
 export const NEWS_JOBS = {
@@ -19,7 +19,7 @@ export interface SynthesizeJobPayload {
 
 // Instantiate the primary news execution queue channel
 export const newsQueue = new Queue('news-processing-queue', {
-  connection: redisConnectionOptions,
+  connection: redisConnection,
   ...defaultQueueJobOptions,
 });
 

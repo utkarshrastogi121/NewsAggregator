@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { NewsService } from '../services/news.service.js';
-import { GetNewsInput, BookmarkArticleInput } from '../validators/news.validator.js';
+import { NewsService } from '../services/news.service';
+import { GetNewsInput, BookmarkArticleInput } from '../validators/news.validator';
 
 export class NewsController {
   static async getArticles(req: Request, res: Response, next: NextFunction): Promise<void> {

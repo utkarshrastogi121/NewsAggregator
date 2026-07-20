@@ -1,6 +1,6 @@
-import { prisma } from '../utils/prisma.js';
-import { calculateSimilarity } from '../utils/textSimilarity.js';
-import { logger } from '../config/logger.js';
+import { prisma } from '../utils/prisma';
+import { calculateSimilarity } from '../utils/textSimilarity';
+import { logger } from '../config/logger';
 import { Article } from '@prisma/client';
 
 export class ClusteringService {
