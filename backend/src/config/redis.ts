@@ -1,18 +1,17 @@
 import { Redis } from 'ioredis';
 import { logger } from './logger.js';
 
-export const redisConnection = new Redis(process.env.REDIS_URL!, {
-  maxRetriesPerRequest: null, // Required for BullMQ
+export const redis = new Redis(process.env.REDIS_URL!, {
+  maxRetriesPerRequest: null,
   retryStrategy(times: number) {
-    const delay = Math.min(times * 50, 2000);
-    return delay;
+    return Math.min(times * 50, 2000);
   },
 });
 
-redisConnection.on('connect', () => {
+redis.on('connect', () => {
   logger.info('Successfully connected to Redis server');
 });
 
-redisConnection.on('error', (error) => {
+redis.on('error', (error) => {
   logger.error('Redis connection error:', error);
 });
