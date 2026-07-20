@@ -1,7 +1,7 @@
-import { prisma } from '../utils/prisma';
-import { calculateSimilarity } from '../utils/textSimilarity';
-import { logger } from '../config/logger';
-import { Article } from '@prisma/client';
+import { prisma } from "../utils/prisma";
+import { calculateSimilarity } from "../utils/textSimilarity";
+import { logger } from "../config/logger";
+import { Article } from "../generated/prisma/client";
 
 export class ClusteringService {
   private static readonly SIMILARITY_THRESHOLD = 0.35;
@@ -14,17 +14,17 @@ export class ClusteringService {
     try {
       // Fetch event groups that received updates within the last 24 hours
       const aDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      
+
       const activeGroups = await prisma.eventGroup.findMany({
         where: {
-          updatedAt: { gte: aDayAgo }
+          updatedAt: { gte: aDayAgo },
         },
         include: {
           articles: {
             take: 1,
-            orderBy: { publishedAt: 'desc' }
-          }
-        }
+            orderBy: { publishedAt: "desc" },
+          },
+        },
       });
 
       let matchedGroupId: string | null = null;
@@ -47,33 +47,38 @@ export class ClusteringService {
         // Link article to the identified group and bump the modification timestamp
         await prisma.article.update({
           where: { id: article.id },
-          data: { eventGroupId: matchedGroupId }
+          data: { eventGroupId: matchedGroupId },
         });
 
         await prisma.eventGroup.update({
           where: { id: matchedGroupId },
-          data: { updatedAt: new Date() }
+          data: { updatedAt: new Date() },
         });
 
-        logger.info(`Article [${article.id}] clustered into existing group [${matchedGroupId}] (Score: ${highestScore.toFixed(2)})`);
+        logger.info(
+          `Article [${article.id}] clustered into existing group [${matchedGroupId}] (Score: ${highestScore.toFixed(2)})`,
+        );
       } else {
         // Build a fresh event tracking group seeded with the current article title
         const newGroup = await prisma.eventGroup.create({
           data: {
-            title: article.title,
-            updatedAt: new Date()
-          }
+            commonTopic: article.title,
+          },
         });
 
         await prisma.article.update({
           where: { id: article.id },
-          data: { eventGroupId: newGroup.id }
+          data: { eventGroupId: newGroup.id },
         });
 
-        logger.info(`No matching trend context found. Created new EventGroup [${newGroup.id}] for article [${article.id}].`);
+        logger.info(
+          `No matching trend context found. Created new EventGroup [${newGroup.id}] for article [${article.id}].`,
+        );
       }
     } catch (error: any) {
-      logger.error(`Clustering service tracking failed for article [${article.id}]: ${error.message}`);
+      logger.error(
+        `Clustering service tracking failed for article [${article.id}]: ${error.message}`,
+      );
       throw error;
     }
   }
